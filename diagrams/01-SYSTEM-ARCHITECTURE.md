@@ -1,79 +1,198 @@
 # System Architecture Diagram - Snipe-IT
 
-## High-Level System Architecture
+## 🏗️ Complete System Architecture
 
-Snipe-IT uses a layered architecture pattern with the following components:
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                             SNIPE-IT SYSTEM ARCHITECTURE                      ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 
-### User Layer
-- Admin Users
-- Asset Users (Employees)
-- API Clients
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            👥 USER LAYER                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│    ┌──────────────┐      ┌──────────────┐      ┌──────────────┐            │
+│    │  🔐 Admin    │      │  👨‍💼 Manager  │      │  📱 API      │            │
+│    │  Users       │      │  Users       │      │  Clients     │            │
+│    └──────┬───────┘      └──────┬───────┘      └──────┬───────┘            │
+│           │                     │                     │                    │
+│           └─────────────────────┼─────────────────────┘                    │
+│                                 │                                          │
+└─────────────────────────────────┼──────────────────────────────────────────┘
+                                  │ HTTP/REST Requests
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    🎨 PRESENTATION LAYER                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│    ┌─────────────────────────────────────────────────────────────────┐     │
+│    │   🌐 Web UI Components                                         │     │
+│    │   ├─ Dashboard Module                                         │     │
+│    │   ├─ Asset Management UI                                      │     │
+│    │   ├─ License Management UI                                    │     │
+│    │   ├─ User Management Interface                                │     │
+│    │   ├─ Admin Panel                                              │     │
+│    │   └─ Reporting Interface                                      │     │
+│    │                                                                │     │
+│    │   🔗 API Gateway Component                                    │     │
+│    │   ├─ REST API Endpoints                                       │     │
+│    │   ├─ Request Router                                           │     │
+│    │   ├─ Response Formatter                                       │     │
+│    │   └─ API Documentation (Swagger)                              │     │
+│    └──────────────────────────┬──────────────────────────────────┘     │
+│                               │                                        │
+└───────────────────────────────┼────────────────────────────────────────┘
+                                │ Laravel Routes
+                                ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    ⚙️ APPLICATION LAYER                                     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐  │
+│  │ 🔐 Authentication & Authorization Service                          │  │
+│  │ ├─ User Login & Password Management                                │  │
+│  │ ├─ JWT/Session Token Management                                    │  │
+│  │ ├─ Permission Verification                                         │  │
+│  │ └─ Role-Based Access Control (RBAC)                                │  │
+│  └──────────────────────────────────────────────────────────────────┬─┘  │
+│                                                                     │     │
+│  ┌─────────────────┬──────────────────┬─────────────────────────┐  │     │
+│  │                 │                  │                         │  │     │
+│  ▼                 ▼                  ▼                         ▼  │     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌────────────┐  │
+│  │📦 Asset      │  │📜 License    │  │👥 User       │  │📊 Report   │  │
+│  │Service       │  │Service       │  │Service       │  │Service     │  │
+│  ├──────────────┤  ├──────────────┤  ├──────────────┤  ├────────────┤  │
+│  │• CRUD Ops    │  │• Seat Mgmt   │  │• Profile Mgmt│  │• Generate  │  │
+│  │• Search      │  │• Expiry      │  │• Department  │  │• Aggregate │  │
+│  │• Assignment  │  │• Compliance  │  │• Location    │  │• Export    │  │
+│  │• Status      │  │• Tracking    │  │• Role Mgmt   │  │• Analytics │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └────┬───────┘  │
+│         │                 │                 │               │         │
+│         └─────────────────┼─────────────────┼───────────────┘         │
+│                           │                 │                         │
+│         ┌─────────────────┴─────────────────┘                         │
+│         │                                                              │
+│  ┌──────▼──────────────────────────────┐                              │
+│  │🔔 Notification Service              │                              │
+│  │├─ Email Notifications               │                              │
+│  │├─ System Notifications              │                              │
+│  │├─ Alert Management                  │                              │
+│  │└─ Event Logging                     │                              │
+│  └──────────────────────────────────┬─┘                               │
+│                                     │                                │
+└─────────────────────────────────────┼────────────────────────────────┘
+                                      │
+┌─────────────────────────────────────┼────────────────────────────────┐
+│                    💾 DATA LAYER                                     │
+├─────────────────────────────────────┼────────────────────────────────┤
+│                                     │                               │
+│  ┌──────────────────────────────────▼──────────────────────────┐   │
+│  │  🗂️ ORM Layer (Eloquent)                                  │   │
+│  │  ├─ Model Definitions                                      │   │
+│  │  ├─ Query Builder                                          │   │
+│  │  ├─ Relationship Management                                │   │
+│  │  └─ Migration Runner                                       │   │
+│  └──────────────────────────┬───────────────────────────────┘   │
+│                             │                                   │
+│                    ┌────────▼────────┐                          │
+│                    │  Cache Layer    │                          │
+│                    │  • Session Mgmt │                          │
+│                    │  • Data Cache   │                          │
+│                    │  • Performance  │                          │
+│                    └────────┬────────┘                          │
+│                             │                                   │
+└─────────────────────────────┼───────────────────────────────────┘
+                              │
+┌─────────────────────────────┼───────────────────────────────────┐
+│                 🗄️ DATABASE LAYER                              │
+├─────────────────────────────┼───────────────────────────────────┤
+│                             │                                   │
+│   ┌─────────────────────────▼─────────────────────────────┐    │
+│   │ 📊 MySQL/MariaDB Database                            │    │
+│   │ ├─ Users Table          ├─ Assets Table              │    │
+│   │ ├─ Licenses Table       ├─ Categories Table          │    │
+│   │ ├─ Checkouts Table      ├─ Locations Table           │    │
+│   │ ├─ License_Seats Table  ├─ Audit_Logs Table          │    │
+│   │ └─ Departments Table    └─ Asset_Models Table        │    │
+│   └────────────┬────────────────────────────────────────┘    │
+│                │                                             │
+│   ┌────────────▼────────────────────────┐                   │
+│   │ 💾 File Storage System              │                   │
+│   │ ├─ Asset Documents                  │                   │
+│   │ ├─ Asset Images                     │                   │
+│   │ └─ Backup Files                     │                   │
+│   └─────────────────────────────────────┘                   │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
 
-### Presentation Layer
-- Web UI Routes & Controllers
-- Bootstrap 4 Frontend
-- jQuery Interactions
-- Blade Templates
+┌─────────────────────────────────────────────────────────────┐
+│            🔗 EXTERNAL INTEGRATIONS                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────────┐  │
+│  │📧 Email      │  │🔑LDAP/SSO    │  │☁️ File Backup  │  │
+│  │Service       │  │Integration   │  │Systems         │  │
+│  └──────────────┘  └──────────────┘  └────────────────┘  │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
 
-### Application Layer
-- API Controllers
-- Web Controllers
-- Service Layer (Business Logic)
-- Middleware (Authentication, Logging)
-- Laravel Framework
+## 📋 Data Flow Path
 
-### Data Layer
-- Eloquent ORM / Query Builder
-- Model-Database Mapping
+```
+User Request 
+     │
+     ▼
+┌─────────────────────────────────────┐
+│ Middleware (Auth, Logging, CORS)    │
+└────────────┬────────────────────────┘
+             │
+    ┌────────▼────────┐
+    │ Validation      │
+    └────────┬────────┘
+             │
+    ┌────────▼────────┐
+    │ Route Dispatch  │
+    └────────┬────────┘
+             │
+    ┌────────▼────────────────────┐
+    │ Controller Action            │
+    │ (Request Handling)           │
+    └────────┬────────────────────┘
+             │
+    ┌────────▼────────────────────┐
+    │ Service Layer                │
+    │ (Business Logic)             │
+    └────────┬────────────────────┘
+             │
+    ┌────────▼────────────────────┐
+    │ Repository/Query Builder     │
+    │ (Data Access)                │
+    └────────┬────────────────────┘
+             │
+    ┌────────▼────────────────────┐
+    │ Database Query               │
+    └────────┬────────────────────┘
+             │
+    ┌────────▼────────────────────┐
+    │ Format Response              │
+    │ (JSON/HTML)                  │
+    └────────┬────────────────────┘
+             │
+             ▼
+        User Display
+```
 
-### Database Layer
-- MySQL/MariaDB (Primary data store)
-- Redis/Cache (Session management)
-- File Storage System (Assets)
+## 🎯 Key Features Overview
 
-### External Systems
-- Email Server
-- LDAP/SSO (optional)
-- File Backup Systems
-
-## Data Flow Summary
-
-1. User Request → Web/API endpoint
-2. Middleware Processing → Authentication & validation
-3. Controller Logic → Route to appropriate handler
-4. Service/Business Logic → Process business rules
-5. Database Query → Fetch/store data via ORM
-6. Response Rendering → Return HTML/JSON
-7. User Display → Browser/API client
-
-## Core Components
-
-### Frontend Components
-- Dashboard
-- Asset Management Interface
-- License Management Interface
-- User Profile Interface
-- Reporting Interface
-- Admin Panel
-
-### Backend Components
-- Authentication System
-- Authorization System
-- Asset Service
-- License Service
-- User Service
-- Notification Service
-- Report Generation Service
-- Audit Logging Service
-
-### Database Schema
-- Users Table
-- Assets Table
-- Licenses Table
-- Checkouts Table
-- License Seats Table
-- Categories Table
-- Models Table
-- Locations Table
-- Departments Table
-- Audit Logs Table
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| **Asset Service** | Track and manage IT assets | ✅ Active |
+| **License Service** | Manage software licenses and seats | ✅ Active |
+| **Checkout Service** | Handle asset allocation | ✅ Active |
+| **User Service** | Manage employees and permissions | ✅ Active |
+| **Reporting Engine** | Generate compliance reports | ✅ Active |
+| **Notification System** | Send alerts and updates | ✅ Active |
+| **Audit System** | Track all changes | ✅ Active |
+| **API Layer** | RESTful API access | ✅ Active |
